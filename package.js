@@ -1,8 +1,9 @@
 Package.describe({
   summary: 'Integrate with Raven JS for JavaScript errors and logs',
-  version: '0.3.1',
-  name: 'deepwell:raven',
-  git: 'https://github.com/deepwell/meteor-raven.git'
+  version: '0.3.2',
+  name: 'dvelopment:raven',
+  git: 'https://github.com/dVelopment/meteor-raven.git',
+  description: 'README.md'
 });
 
 Npm.depends({
