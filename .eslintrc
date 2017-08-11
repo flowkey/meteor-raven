@@ -9,9 +9,6 @@
     "settings": {
         "import/resolver": "meteor"
     },
-    "globals": {
-        "flow": true
-    },
     "env": {
         "es6": true,
         "browser": true,
