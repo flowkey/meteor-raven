@@ -1,65 +1,69 @@
-Raven
-============
+# Raven
 
-Raven/[Sentry](https://www.getsentry.com) integration for Meteor. Includes [Raven.js](https://github.com/getsentry/raven-js) for frontend logging and [raven-node](https://github.com/mattrobenolt/raven-node) for backend logging.
+Raven/[Sentry](https://www.getsentry.com) integration for Meteor. Includes [Raven.js](https://github.com/getsentry/raven-js) for frontend logging and [raven-node](https://github.com/getsentry/raven-node) for backend logging.
 
 Provides consolidated error logging to Sentry via Raven from both the client and the server.
 
-This package is MIT Licensed. Do whatever you like with it but any responsibility for doing so is your own. All rights to raven are with the original authors.
+**Although this is a fork of `dVelopment/meteor-raven` and `deepwell/meteor-raven` the API is completely differently!**
 
-Main differences to deepwell:raven
-============
-
-- This package doesn't embed the browser code. Instead, it pulls it from npm
-- Raven libs updated to most recent versions.
-
-Usage
-============
-Configure your client and server DSN keys and log an error message. For the
-client entry, don't include your private key. For the server entry, **include your private key.**
-
-```javascript
-RavenLogger.initialize({
-  client: 'https://public_key@app.getsentry.com/app_id',            // Do not include your private key here
-  server: 'https://public_key:private_key@app.getsentry.com/app_id' // *DO* include your private key here
-});
-RavenLogger.log('Testing error message');
+## Usage
+Grab your client keys (DSN) from your project settings in Sentry. I recommend saving them in Meteor's `setting.json`:
+```js
+  {
+    // ...
+    "sentryPrivateDSN": "https://public_key@app.getsentry.com/app_id",
+    "public": {
+      // ...
+      // public key has to be available from the client!
+      "sentryPublicDSN": "https://public_key:private_key@app.getsentry.com/app_id"
+    }
+  }
 ```
 
-Optionally you can pass a tag:
+Now you can initialize the RavenLogger:
+```js
+import { Meteor } from 'meteor/meteor';
+import RavenLogger from 'meteor/flowkey:raven';
 
-```javascript
-RavenLogger.log('Testing error message', { component: 'system' });
+// ...
+
+export const ravenLogger = new RavenLogger({
+  publicDSN: Meteor.settings.public.sentryPublicDSN, // will be used on the client
+  privateDSN: Meteor.settings.sentryPrivateDSN, // will be used on the server
+  shouldCatchConsoleError: true, // default
+  trackUser: false, // default
+}, ravenOptions);
+
+// ...
 ```
 
-To set tags on the whole context, use `RavenLogger.setTagsContext`:
+You can pass options for raven directly into the client. Which parameters are accepted can be found at the Sentry docs for [the Node client](https://docs.sentry.io/clients/node/config/#optional-settings) and the [JavaScript client](https://docs.sentry.io/clients/javascript/config/#optional-settings). The options are being passed into both clients.
 
-```javascript
-RavenLogger.setTagsContext({ component: 'system' });
+If you don't want to catch errors thrown globally or using `console.error` set `shouldCatchConsoleError` to `false`.
+
+If you are using the Meteor Accounts package, you can enable user tracking on errors by settings `trackUser` to `true`. It will associate the error with the user's userId.
+
+
+Now you can finally log messages to Sentry!
+```js
+import { ravenLogger } from './path/to/logger';
+
+// ...
+
+ravenLogger.log('Error transmitted using Raven.captureMessage', additionalData);
+ravenLogger.log(new Error('Error transmitted using Raven.captureException'), additionalData);
 ```
 
-If you are using the Meteor Accounts package, you can enable user tracking on errors:
+If the first argument is an `instanceof Error` then `captureException` from Raven is used, otherwise `captureMessage`. If an error is passed, Raven will be saving full error and exception stack traces.
 
-```javascript
-RavenLogger.initialize({
-  client: 'your client DSN here',
-  server: 'your server DSN here'
-}, {
-  trackUser: true
-});
+`additionalData` can be anything described in the [Sentry docs](https://docs.sentry.io/clients/javascript/usage/#passing-additional-data).
+
+
+To set tags on the whole context, use `ravenLogger.setTagsContext`:
+
+```js
+ravenLogger.setTagsContext({ component: 'system' });
 ```
 
-To catch uncaught exceptions on the server, set patchGlobal to true or a function:
-
-```javascript
-RavenLogger.initialize({
-  client: 'your client DSN here',
-  server: 'your server DSN here'
-});
-```
-
-Raven also works very well with saving full error and exception stack traces. Simply pass an Error or a Meteor.Error object to the log method to keep the stack trace.
-
-```javascript
-RavenLogger.log(new Meteor.Error(422, 'Failed to save object to database'));
-```
+## License
+This package is licensed under the [MIT License](https://github.com/flowkey/meteor-raven/blob/master/LICENSE). All rights to Raven are with the original authors.
