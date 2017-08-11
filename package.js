@@ -14,5 +14,6 @@ Npm.depends({
 Package.onUse(function (api) {
   api.versionsFrom('METEOR@1.4.2.3');
   api.use('ecmascript');
-  api.mainModule('lib/main.js');
+  api.mainModule('lib/client.js', 'client');
+  api.mainModule('lib/server.js', 'server');
 });
