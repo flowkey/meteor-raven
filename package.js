@@ -1,13 +1,13 @@
 Package.describe({
   summary: 'Integrate with Raven JS for JavaScript errors and logs',
-  version: '0.4.0',
+  version: '1.0.0',
   name: 'flowkey:raven',
   git: 'https://github.com/flowkey/meteor-raven.git',
   description: 'README.md'
 });
 
 Npm.depends({
-  'raven': '2.1.1',
+  'raven': '2.1.2',
   'raven-js': '3.17.0',
 });
 
