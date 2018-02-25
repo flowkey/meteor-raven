@@ -7,8 +7,8 @@ Package.describe({
 });
 
 Npm.depends({
-  'raven': '2.1.2',
-  'raven-js': '3.17.0',
+  'raven': '2.4.1',
+  'raven-js': '3.22.3',
 });
 
 Package.onUse(function (api) {
