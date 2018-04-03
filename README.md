@@ -64,6 +64,3 @@ To set tags on the whole context, use `ravenLogger.setTagsContext`:
 ```js
 ravenLogger.setTagsContext({ component: 'system' });
 ```
-
-## License
-This package is licensed under the [MIT License](https://github.com/flowkey/meteor-raven/blob/master/LICENSE). All rights to Raven are with the original authors.
